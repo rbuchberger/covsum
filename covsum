@@ -105,7 +105,7 @@ module CovSum
 
             covsum Italy Germany Spain
 
-            covsum -C | fzf
+            covsum -C | fzf | xargs covsum
 
         Country names are space separated and case insensitive. Wrap multi-word
         names in quotes. For global data either use 'world' or leave blank.
