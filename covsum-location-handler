@@ -3,12 +3,6 @@
 # This is a covsum location handler, meant for integrating with taskbar widgets.
 require 'optparse'
 
-# Just one class.
-def help_text
-  <<~HELP
-  HELP
-end
-
 def locations
   %w[World US Poland]
 end
@@ -61,8 +55,14 @@ def update_waybar
   `pkill -RTMIN+8 waybar`
 end
 
+def help_text
+  <<~HELP
+    Run with no arguments to see currently selected location.
+  HELP
+end
+
 OptionParser.new do |options|
-  options.banner = 'covsum location handler'
+  options.banner = help_text
 
   options.on '-h', '--help', 'Print Help' do
     puts options
