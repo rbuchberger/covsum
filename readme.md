@@ -1,54 +1,57 @@
 # COVID-19 CLI Summarizer
 
+![Taskbar Widget Demo](https://gfycat.com/zigzagwaterloggedgermanpinscher)
+
 This is a little script I wrote for myself to track COVID-19 in a taskbar
 widget. There are 2 parts: a `covsum` script and a location handler.
 
-```
+```bash
 $ covsum
-World: 223,027 active, 14,643 deaths
+  World: 1,095,917 confirmed, 58,787 deaths
 
 $ covsum -e
-World: 223,027 😷 14,643 💀
+  World: 1,095,917 📈 58,787 💀
 
 $ covsum Italy Germany
-Italy: 46,638 active, 5,476 deaths | Germany: 24,513 active, 94 deaths
+  Italy: 119,827 confirmed, 14,681 deaths | Germany: 91,159 confirmed, 1,275 deaths
 
 $ covsum -f confirmed,recovered
-World: 336,004 confirmed, 98,334 recovered
+  World: 1,095,917 confirmed, 225,796 recovered
 
 $ covsum --help
+  COVID-19 Summarizer
 
-COVID-19 Summarizer v0.1.0
+  Usage: covsum [OPTIONS] [COUNTRY] [COUNTRY (...)]
 
-Usage: covsum [OPTIONS] [COUNTRY] [COUNTRY (...)]
+  Examples:
 
-Examples:
+      covsum
 
-    covsum
+      covsum -e US world
 
-    covsum -e US world
+      covsum "united kingdom" -f active,recovered,deaths,confirmed
 
-    covsum "united kingdom" -f active,recovered,deaths,confirmed
+      covsum Italy Germany Spain
 
-    covsum Italy Germany Spain
+      covsum -C | fzf | xargs covsum
 
-    covsum -C | fzf | xargs covsum
+  Country names are space separated and case insensitive. Wrap multi-word
+  names in quotes. For global data either use 'world' or leave blank.
 
-Country names are space separated and case insensitive. Wrap multi-word
-names in quotes. For global data either use 'world' or leave blank.
+  Fields may be any combination of 'confirmed', 'recovered', 'deaths',
+  or 'active'. Note that  the API only returns confirmed, recovered, and
+  deaths; 'active' is calculated by subtracting 'recovered' and 'deaths'
+  from the confirmed count.
 
-Fields may be any combination of 'confirmed', 'recovered', 'deaths',
-or 'active'.
+  Data is saved in ~/.cache/coronavirus_data.json, and will be updated if
+  more than 6 hours old. Force an update now with the -U flag.
 
-Data is saved in ~/.cache/coronavirus_data.json, and will be updated if
-more than 6 hours old. Force an update now with the -U flag.
-
-Options:
-    -h, --help
-    -e, --emojis
-    -f, --fields [Fields]            Comma separated, no spaces
-    -U, --update                     Force Download
-    -C, --countries
+  Options:
+      -h, --help
+      -e, --emojis
+      -f, --fields [Fields]            Comma separated, no spaces
+      -U, --update                     Force Download
+      -C, --countries
 
 ```
 
@@ -57,14 +60,17 @@ for 6 hours.
 
 ## covsum-location-handler
 
-- Select a location from a hard-coded list. Run with no arguments to see 
-  currently selected location.
-- Increment and decrement that location (call these on click & scroll events).
-- Send waybar a signal to update the widget
+This isn't a general purpose tool, it's a starting point for you to adapt.
+Its purpose is to cycle through a list of interesting locations, which is
+useful because it lets you do this: `covsum $(covsum-location-handler)`
 
-This isn't a general purpose tool, it's a starting point for you to customize.
+The increment and decrement operations also send a signal to waybar, which I
+have configured to reload the module.
 
-```
+Note that there's no configuration here. To change the list of locations, you
+need to edit the script itself.
+
+```bash
 $ covsum-location-handler
 World
 
@@ -94,15 +100,24 @@ covsum location handler
 
 ```
 
+- Select a location from a hard-coded list. Run with no arguments to see
+  currently selected location.
+- Increment and decrement that location (call these on click & scroll events).
+- Send waybar a signal to update the widget
+
 ## Dependencies
 
 - Ruby >= 2.5
 
 ## Installation
 
-Both scripts are self contained; just download/clone and run. You may have to
-`chmod +x`, and you'll almost definitely want to modify the location handler for
-your use case.
+Both scripts are self contained.
+
+- Download/clone
+- You may have to `chmod +x`
+- Check that `$ /bin/ruby --version` >= 2.5
+- If applicable, modify the location handler for your use case.
+- Run
 
 ## Integration
 
@@ -111,7 +126,7 @@ Here's my waybar module:
 ```json
 {
   "custom/covsum": {
-    "exec": "~/development/covsum/covsum -f active,recovered,deaths -e $(~/development/covsum/covsum-location-handler)",
+    "exec": "~/development/covsum/covsum -e $(~/development/covsum/covsum-location-handler)",
     "interval": 600,
     "on-click": "~/development/covsum/covsum-location-handler --increment",
     "on-right-click": "~/development/covsum/covsum-location-handler --decrement",
