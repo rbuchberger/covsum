@@ -1,7 +1,5 @@
 # COVID-19 CLI Summarizer
 
-![Taskbar Widget Demo](https://gfycat.com/zigzagwaterloggedgermanpinscher)
-
 This is a little script I wrote for myself to track COVID-19 in a taskbar
 widget. There are 2 parts: a `covsum` script and a location handler.
 
