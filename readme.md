@@ -137,3 +137,7 @@ Here's my waybar module:
 ```
 
 Others will be similar, I'm sure you can figure it out.
+
+## License
+
+Do whatever you want.
